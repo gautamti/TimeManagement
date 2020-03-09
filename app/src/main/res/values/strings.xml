@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">TimeManagementApp</string>
     <string name="action_settings">Settings</string>
+    <string name="welcome">Welcome!</string>
+    <string name="activity_log_text">What activity would you like to log?</string>
+    <string name="activity">Activity...</string>
+    <string name="time_spent">Time spent...</string>
+    <string name="time_spent_hint">1 hour</string>
+    <string name="add_activity">Add Activity</string>
+    <string name="activity_hint">Working Out</string>
+    <string name="view_activities">View Activities</string>
 </resources>
