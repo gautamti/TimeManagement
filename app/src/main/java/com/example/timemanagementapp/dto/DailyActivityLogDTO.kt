@@ -1,8 +1,8 @@
-package com.example.timemanagementapp.DTO
+package com.example.timemanagementapp.dto
 
 import java.util.*
 
-class DailyActivityLogDTO(
+data class DailyActivityLogDTO(
     var date: Date,
     var activityLog: List<ActivityDTO>
 )
