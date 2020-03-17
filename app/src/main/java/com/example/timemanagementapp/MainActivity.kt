@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
     }
 
          fun addActivity(view: View) {
-            val newActivityName = txtActivity.text;
+            val newActivityName = txtActivity.text
             val newActivityLength = txtTimeSpent.text
             var appFilePath = filesDir
             val sdf = SimpleDateFormat("dd.M.yyyy")
@@ -57,28 +57,19 @@ class MainActivity : AppCompatActivity() {
             val currentDateFile = File(currentDateDirectoryName)
             val gson = Gson()
 
-            Log.d("Log", txtActivity.text.toString())
-            Log.d("Log", txtTimeSpent.text.toString())
-            Log.d("Log", appFilePath.toString())
-            Log.d("Log", currentDate)
-            Log.d("Log", currentDateDirectoryName)
-
             // if app root directory does not exist, make it
            if(!appFilePath.isDirectory){
                appFilePath.mkdir()
-               Log.d("Log","made app root directory")
            }
             // if there is not a directory for the current day, make one
             if(!currentDateFile.isDirectory){
                 currentDateFile.mkdir()
-                Log.d("Log","made $appFilePath/$currentDate directory")
             }
 
             // if an activity log for the day has not been made, make a blank one and save it
             val activityLogFilePath = File("$currentDateFile/$currentDate.json")
             activityLogFilePath.setWritable(true)
             if(!activityLogFilePath.exists()){
-                Log.d("Log","new activity log made")
 
                 // Gson needs the file to not be null so a default activity log needs to be created
                 var newActivityLogList = ArrayList<ActivityDTO>()
@@ -102,25 +93,24 @@ class MainActivity : AppCompatActivity() {
              // iterate through the list of activities for the day, if it is a new activity add it, if is an existing one, add the duration
             for (activity in syncedActivityLog){
 
-                if (activity.activityName == newActivityName.toString() && activity.activityName != null){
-                    activity.activityDuration = activity.activityDuration.plus(newActivityLength.toString().toInt())
+                if (activity.activityName.toString() == newActivityName.toString() || activity.activityName ==null){
+                    var newActivity = ActivityDTO("exampleActivity", 1)
+                    var oldActivityLength = activity.activityDuration
+                    newActivity.activityName = newActivityName.toString()
+                    newActivity.activityDuration = newActivityLength.toString().toInt().plus(oldActivityLength)
+                    dailyActivityLog.activityLog.remove(activity)
+                    dailyActivityLog.activityLog.add(newActivity)
                     var jsonString = gson.toJson(dailyActivityLog)
                     File(activityLogFilePath.toString()).writeText(jsonString)
-                    Log.d("Log", "that activity already exists, added more time to existing activity")
                 }
 
-                // removes the default activity if it exists
-                if (activity.activityName == "defaultName"){
-                    dailyActivityLog.activityLog.remove(activity)
-                }
-                else{
-                    val newActivity = ActivityDTO("exampleActivity", 1)
+                else if (activity.activityName.toString() != newActivityName.toString() && activity.activityName !=null) {
+                    var newActivity = ActivityDTO("exampleActivity", 1)
                     newActivity.activityName = newActivityName.toString()
                     newActivity.activityDuration = newActivityLength.toString().toInt()
                     dailyActivityLog.activityLog.add(newActivity)
                     var jsonString = gson.toJson(dailyActivityLog)
                     File(activityLogFilePath.toString()).writeText(jsonString)
-                    Log.d("Log", "added new activity")
                 }
 
             }
