@@ -1,5 +1,6 @@
 package com.example.timemanagementapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -25,10 +26,39 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+        var appFilePath = filesDir
+        val sdf = SimpleDateFormat("dd.M.yyyy")
+        val currentDate = sdf.format(Date())
+        val currentDateDirectoryName = "$appFilePath/$currentDate"
+        val currentDateFile = File(currentDateDirectoryName)
+        val gson = Gson()
+
+        // if app root directory does not exist, make it
+        if(!appFilePath.isDirectory){
+            appFilePath.mkdir()
         }
+        // if there is not a directory for the current day, make one
+        if(!currentDateFile.isDirectory){
+            currentDateFile.mkdir()
+        }
+
+        // if an activity log for the day has not been made, make a blank one and save it
+        val activityLogFilePath = File("$currentDateFile/$currentDate.json")
+        activityLogFilePath.setWritable(true)
+        if(!activityLogFilePath.exists()){
+
+            // Gson needs the file to not be null so a default activity log needs to be created
+            var newActivityLogList = ArrayList<ActivityDTO>()
+            var defaultActivity = ActivityDTO("defaultName",0)
+            newActivityLogList.add(defaultActivity)
+            var dailyActivityLog = DailyActivityLogDTO(newActivityLogList)
+
+            // converts the object to a JSON string
+            var jsonString = gson.toJson(dailyActivityLog)
+            File(activityLogFilePath.toString()).writeText(jsonString)
+
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -57,64 +87,80 @@ class MainActivity : AppCompatActivity() {
             val currentDateFile = File(currentDateDirectoryName)
             val gson = Gson()
 
-            // if app root directory does not exist, make it
-           if(!appFilePath.isDirectory){
-               appFilePath.mkdir()
-           }
-            // if there is not a directory for the current day, make one
-            if(!currentDateFile.isDirectory){
-                currentDateFile.mkdir()
-            }
-
-            // if an activity log for the day has not been made, make a blank one and save it
             val activityLogFilePath = File("$currentDateFile/$currentDate.json")
             activityLogFilePath.setWritable(true)
-            if(!activityLogFilePath.exists()){
 
-                // Gson needs the file to not be null so a default activity log needs to be created
-                var newActivityLogList = ArrayList<ActivityDTO>()
-                var defaultActivity = ActivityDTO("defaultName",0)
-                newActivityLogList.add(defaultActivity)
-                var dailyActivityLog = DailyActivityLogDTO(currentDate,newActivityLogList)
+             // if app root directory does not exist, make it
+             if(!appFilePath.isDirectory){
+                 appFilePath.mkdir()
+             }
+             // if there is not a directory for the current day, make one
+             if(!currentDateFile.isDirectory){
+                 currentDateFile.mkdir()
+             }
 
-                // converts the object to a JSON string
-                var jsonString = gson.toJson(dailyActivityLog)
-                File(activityLogFilePath.toString()).writeText(jsonString)
+             // if an activity log for the day has not been made, make a blank one and save it
+             activityLogFilePath.setWritable(true)
+             if(!activityLogFilePath.exists()){
 
-            }
+                 // Gson needs the file to not be null so a default activity log needs to be created
+                 var newActivityLogList = ArrayList<ActivityDTO>()
+                 var defaultActivity = ActivityDTO("defaultName",0)
+                 newActivityLogList.add(defaultActivity)
+                 var dailyActivityLog = DailyActivityLogDTO(currentDate,newActivityLogList)
+
+                 // converts the object to a JSON string
+                 var jsonString = gson.toJson(dailyActivityLog)
+                 File(activityLogFilePath.toString()).writeText(jsonString)
+
+             }
 
 
-            // load activity log for the day
+             // load activity log for the day
             var jsonString = File(activityLogFilePath.toString()).readText()
-            val dailyActivityLog: DailyActivityLogDTO = gson.fromJson(jsonString, DailyActivityLogDTO::class.java)
+             var dailyActivityLog: List<ActivityDTO> = gson.fromJson(jsonString , Array<ActivityDTO>::class.java).toList()
 
             // using a CopyOnWriteArrayList prevents an error where more than one thread is operating on the list, leading to an error
-            val syncedActivityLog =  CopyOnWriteArrayList(dailyActivityLog.activityLog)
-             // iterate through the list of activities for the day, if it is a new activity add it, if is an existing one, add the duration
-            for (activity in syncedActivityLog){
+            val syncedActivityLog =  CopyOnWriteArrayList(dailyActivityLog)
+             val syncedActivityNames = CopyOnWriteArrayList<String>();
 
-                if (activity.activityName.toString() == newActivityName.toString() || activity.activityName ==null){
-                    var newActivity = ActivityDTO("exampleActivity", 1)
-                    var oldActivityLength = activity.activityDuration
-                    newActivity.activityName = newActivityName.toString()
-                    newActivity.activityDuration = newActivityLength.toString().toInt().plus(oldActivityLength)
-                    dailyActivityLog.activityLog.remove(activity)
-                    dailyActivityLog.activityLog.add(newActivity)
-                    var jsonString = gson.toJson(dailyActivityLog)
-                    File(activityLogFilePath.toString()).writeText(jsonString)
-                }
+             // create a list of all activity names
+             for(activity in syncedActivityLog){
+                 syncedActivityNames.add(activity.activityName)
+             }
 
-                else if (activity.activityName.toString() != newActivityName.toString() && activity.activityName !=null) {
-                    var newActivity = ActivityDTO("exampleActivity", 1)
-                    newActivity.activityName = newActivityName.toString()
-                    newActivity.activityDuration = newActivityLength.toString().toInt()
-                    dailyActivityLog.activityLog.add(newActivity)
-                    var jsonString = gson.toJson(dailyActivityLog)
-                    File(activityLogFilePath.toString()).writeText(jsonString)
-                }
+             //check if list of names contains the entered value
+             val isNameDuplicated = syncedActivityNames.contains(newActivityName.toString())
 
-            }
+             // if name is not duplicated add new activity to log
+             if(!isNameDuplicated){
+                 var newActivity = ActivityDTO("exampleActivity", 1)
+                 newActivity.activityName = newActivityName.toString()
+                 newActivity.activityDuration = newActivityLength.toString().toInt()
+                 syncedActivityLog.add(newActivity)
+                 var jsonString = gson.toJson(syncedActivityLog)
+                 File(activityLogFilePath.toString()).writeText(jsonString)
+             }
+             // if name is duplicated, add the time to existing activity
+             else{
+                 var indexOfDuplicatedName = syncedActivityNames.indexOf(newActivityName.toString())
+                 var duplicateActivity = syncedActivityLog.get(indexOfDuplicatedName)
+                 syncedActivityLog.removeAt(indexOfDuplicatedName);
+                 duplicateActivity.activityDuration = duplicateActivity.activityDuration + newActivityLength.toString().toInt()
+                 syncedActivityLog.add(duplicateActivity)
+                 var jsonString = gson.toJson(syncedActivityLog)
+                 File(activityLogFilePath.toString()).writeText(jsonString)
+             }
 
 
+             txtActivity.text = null
+             txtTimeSpent.text = null
         }
+
+        fun viewActivityHistory(view: View){
+            val intent = Intent(this, ViewActivityHistory::class.java)
+            startActivity(intent)
+        }
+
+
     }
