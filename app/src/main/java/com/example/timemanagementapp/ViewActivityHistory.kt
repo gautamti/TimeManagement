@@ -46,8 +46,8 @@ class ViewActivityHistory : AppCompatActivity() {
 
         // load activity log for the day
         var jsonString = File(activityLogFilePath.toString()).readText()
-        var dailyActivityLog: List<ActivityDTO> = gson.fromJson(jsonString , Array<ActivityDTO>::class.java).toList()
-        val syncedActivityLog =  CopyOnWriteArrayList(dailyActivityLog)
+        var dailyActivityLog: DailyActivityLogDTO = gson.fromJson(jsonString , DailyActivityLogDTO::class.java)
+        val syncedActivityLog =  CopyOnWriteArrayList(dailyActivityLog.activityLog)
 
         //remove activities with a duration of zero
         for(activity in syncedActivityLog){
