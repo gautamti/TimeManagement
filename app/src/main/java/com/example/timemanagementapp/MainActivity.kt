@@ -20,7 +20,7 @@ import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
-    val DEFAULTACTIVITYNAME = "UC2020_DefaultActivity"
+    private val DEFAULT_ACTIVITY_NAME = "UC2020_DefaultActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,13 +49,13 @@ class MainActivity : AppCompatActivity() {
         if(!activityLogFilePath.exists()){
 
             // Gson needs the file to not be null so a default activity log needs to be created
-            var newActivityLogList = ArrayList<ActivityDTO>()
-            var defaultActivity = ActivityDTO(DEFAULTACTIVITYNAME,0)
+            val newActivityLogList = ArrayList<ActivityDTO>()
+            val defaultActivity = ActivityDTO(DEFAULT_ACTIVITY_NAME,0)
             newActivityLogList.add(defaultActivity)
-            var dailyActivityLog = DailyActivityLogDTO(newActivityLogList,currentDate)
+            val dailyActivityLog = DailyActivityLogDTO(newActivityLogList,currentDate)
 
             // converts the object to a JSON string
-            var jsonString = gson.toJson(dailyActivityLog)
+            val jsonString = gson.toJson(dailyActivityLog)
             File(activityLogFilePath.toString()).writeText(jsonString)
 
         }
@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
          fun addActivity(view: View) {
             val newActivityName = txtActivity.text
             val newActivityLength = txtTimeSpent.text
-            var appFilePath = filesDir
+            val appFilePath = filesDir
             val sdf = SimpleDateFormat("dd.M.yyyy")
             val currentDate = sdf.format(Date()).toString()
             val currentDateDirectoryName = "$appFilePath/$currentDate"
@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
 
              // load activity log for the day
              var jsonString = File(activityLogFilePath.toString()).readText()
-             var dailyActivityLog: DailyActivityLogDTO = gson.fromJson(jsonString, DailyActivityLogDTO::class.java)
+             val dailyActivityLog: DailyActivityLogDTO = gson.fromJson(jsonString, DailyActivityLogDTO::class.java)
 
              // using a CopyOnWriteArrayList prevents an error where more than one thread is operating on the list, leading to an error
              val syncedActivityLog =  CopyOnWriteArrayList(dailyActivityLog.activityLog)
@@ -121,17 +121,17 @@ class MainActivity : AppCompatActivity() {
              val isNameDuplicated = syncedActivityNames.contains(newActivityName.toString())
 
 
-             var activityName = newActivityName.toString()
+             val activityName = newActivityName.toString()
              var activityDuration = newActivityLength.toString().toInt()
              // if name is  duplicated remove the existing activity and add its duration to the new activity
              if(isNameDuplicated){
-                 var indexOfDuplicatedName = syncedActivityNames.indexOf(newActivityName.toString())
-                 var duplicateActivity = dailyActivityLog.activityLog.get(indexOfDuplicatedName)
+                 val indexOfDuplicatedName = syncedActivityNames.indexOf(newActivityName.toString())
+                 val duplicateActivity = dailyActivityLog.activityLog.get(indexOfDuplicatedName)
                  dailyActivityLog.activityLog.removeAt(indexOfDuplicatedName);
                  activityDuration += duplicateActivity.activityDuration
              }
 
-             var combinedActivity = ActivityDTO(activityName,activityDuration)
+             val combinedActivity = ActivityDTO(activityName,activityDuration)
              combinedActivity.activityName = activityName
              combinedActivity.activityDuration = activityDuration
              dailyActivityLog.activityLog.add(combinedActivity)
