@@ -1,14 +1,13 @@
-package com.example.timemanagementapp
+package com.example.timemanagementapp.ui
 
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.example.timemanagementapp.DTO.ActivityDTO
 import com.example.timemanagementapp.DTO.DailyActivityLogDTO
+import com.example.timemanagementapp.R
 import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
@@ -42,7 +41,8 @@ class ViewActivityHistory : AppCompatActivity() {
         val currentDateDirectoryName = "$appFilePath/$currentDate"
         val currentDateFile = File(currentDateDirectoryName)
         val gson = Gson()
-        val activityLogFilePath = File("$currentDateFile/$currentDate.json")
+        val activityLogFilePath =
+            File("$currentDateFile/$currentDate.json")
 
         // load activity log for the day
         var jsonString = File(activityLogFilePath.toString()).readText()

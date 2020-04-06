@@ -1,4 +1,4 @@
-package com.example.timemanagementapp
+package com.example.timemanagementapp.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +8,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.timemanagementapp.DTO.ActivityDTO
 import com.example.timemanagementapp.DTO.DailyActivityLogDTO
+import com.example.timemanagementapp.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -20,7 +21,7 @@ import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
-    val DEFAULTACTIVITYNAME = "UC2020_DefaultActivity"
+    val DEFAULT_ACTIVITY_NAME = "UC2020_DefaultActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 
             // Gson needs the file to not be null so a default activity log needs to be created
             var newActivityLogList = ArrayList<ActivityDTO>()
-            var defaultActivity = ActivityDTO(DEFAULTACTIVITYNAME,0)
+            var defaultActivity = ActivityDTO(DEFAULT_ACTIVITY_NAME,0)
             newActivityLogList.add(defaultActivity)
             var dailyActivityLog = DailyActivityLogDTO(newActivityLogList,currentDate)
 
@@ -69,9 +70,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        /**
+         *  Handle action bar item clicks here. The action bar will
+         *  automatically handle clicks on the Home/Up button, so long
+         *  as you specify a parent activity in AndroidManifest.xml.
+         */
         return when (item.itemId) {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
@@ -88,7 +91,8 @@ class MainActivity : AppCompatActivity() {
             val currentDateFile = File(currentDateDirectoryName)
             val gson = Gson()
 
-            val activityLogFilePath = File("$currentDateFile/$currentDate.json")
+            val activityLogFilePath =
+                File("$currentDateFile/$currentDate.json")
             activityLogFilePath.setWritable(true)
 
              // if app root directory does not exist, make it
@@ -109,8 +113,9 @@ class MainActivity : AppCompatActivity() {
              var dailyActivityLog: DailyActivityLogDTO = gson.fromJson(jsonString, DailyActivityLogDTO::class.java)
 
              // using a CopyOnWriteArrayList prevents an error where more than one thread is operating on the list, leading to an error
-             val syncedActivityLog =  CopyOnWriteArrayList(dailyActivityLog.activityLog)
-             val syncedActivityNames = CopyOnWriteArrayList<String>();
+             val syncedActivityLog =
+                 CopyOnWriteArrayList(dailyActivityLog.activityLog)
+             val syncedActivityNames = CopyOnWriteArrayList<String>()
 
              // create a list of all activity names
              for(activity in syncedActivityLog){
@@ -127,7 +132,7 @@ class MainActivity : AppCompatActivity() {
              if(isNameDuplicated){
                  var indexOfDuplicatedName = syncedActivityNames.indexOf(newActivityName.toString())
                  var duplicateActivity = dailyActivityLog.activityLog.get(indexOfDuplicatedName)
-                 dailyActivityLog.activityLog.removeAt(indexOfDuplicatedName);
+                 dailyActivityLog.activityLog.removeAt(indexOfDuplicatedName)
                  activityDuration += duplicateActivity.activityDuration
              }
 
@@ -143,7 +148,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         fun viewActivityHistory(view: View){
-            val intent = Intent(this, ViewActivityHistory::class.java)
+            val intent =
+                Intent(this, ViewActivityHistory::class.java)
             startActivity(intent)
         }
 
