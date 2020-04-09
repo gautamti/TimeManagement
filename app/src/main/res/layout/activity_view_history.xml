@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="75dp"
         android:editable="false"
         android:ems="10"
         android:gravity="start|top"

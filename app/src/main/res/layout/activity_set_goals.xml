@@ -10,15 +10,15 @@
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
         android:layout_marginBottom="32dp"
         android:onClick="backToAddActivity"
         android:text="Back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activityGoals"
-        app:layout_constraintVertical_bias="0.798" />
+        app:layout_constraintVertical_bias="0.727" />
 
     <EditText
         android:id="@+id/activityGoalMin"
@@ -106,9 +106,9 @@
         android:id="@+id/activityGoals"
         android:layout_width="378dp"
         android:layout_height="220dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginTop="20dp"
         android:editable="false"
         android:ems="10"
         android:gravity="start|top"
