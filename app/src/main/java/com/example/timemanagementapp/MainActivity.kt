@@ -147,5 +147,10 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+    fun setActivityGoals(view: View){
+        val intent = Intent(this, SetActivityGoals::class.java)
+        startActivity(intent)
+    }
+
 
     }
