@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">TimeManagementApp</string>
     <string name="action_settings">Settings</string>
+    <string name="todays_log">Today's Log</string>
+    <string name="return_btn">Return</string>
+
 </resources>
