@@ -39,7 +39,7 @@ class ViewActivityHistory : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun drawChart(){
+    private fun drawChart(){
         var appFilePath = filesDir
         val sdf = SimpleDateFormat("dd.M.yyyy")
         val currentDate = sdf.format(Date())
@@ -63,12 +63,12 @@ class ViewActivityHistory : AppCompatActivity() {
         val pieChart: PieChart = findViewById(R.id.pieChart)
         pieChart.setUsePercentValues(true)
 
-        val yvalues = ArrayList<PieEntry>()
+        val yValues = ArrayList<PieEntry>()
         for (activity in syncedActivityLog){
-            yvalues.add(PieEntry(activity.activityDuration.toFloat(), activity.activityName, 0))
+            yValues.add(PieEntry(activity.activityDuration.toFloat(), activity.activityName, 0))
         }
 
-        val dataSet = PieDataSet(yvalues,"")
+        val dataSet = PieDataSet(yValues,"")
         val data = PieData(dataSet)
 
         data.setValueFormatter(PercentFormatter())
