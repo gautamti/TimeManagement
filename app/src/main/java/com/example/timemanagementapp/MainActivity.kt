@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.RelativeLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.timemanagementapp.DTO.ActivityDTO
 import com.example.timemanagementapp.DTO.DailyActivityLogDTO
@@ -33,8 +36,9 @@ class MainActivity : AppCompatActivity() {
         val currentDateDirectoryName = "$appFilePath/$currentDate"
         val currentDateFile = File(currentDateDirectoryName)
         val gson = Gson()
+        //val toast = Toast.makeText(applicationContext, "Hello Javatpoint", Toast.LENGTH_SHORT)
 
-        // if app root directory does not exist, make it
+      // if app root directory does not exist, make it
         if(!appFilePath.isDirectory){
             appFilePath.mkdir()
         }
@@ -91,6 +95,15 @@ class MainActivity : AppCompatActivity() {
             val activityLogFilePath = File("$currentDateFile/$currentDate.json")
             activityLogFilePath.setWritable(true)
 
+             // Validate user inputs for activities
+             if (newActivityName.isNullOrEmpty()){
+               Toast.makeText(applicationContext,"Please enter an activity name",Toast.LENGTH_SHORT).show()
+             }
+             if (newActivityLength.isNullOrEmpty()) {
+               Toast.makeText(applicationContext,"Please enter a length of time for this activity",Toast.LENGTH_SHORT).show()
+             }
+
+
              // if app root directory does not exist, make it
              if(!appFilePath.isDirectory){
                  appFilePath.mkdir()
@@ -117,12 +130,16 @@ class MainActivity : AppCompatActivity() {
                  syncedActivityNames.add(activity.activityName)
              }
 
+
              //check if list of names contains the entered value
              val isNameDuplicated = syncedActivityNames.contains(newActivityName.toString())
 
 
              var activityName = newActivityName.toString()
              var activityDuration = newActivityLength.toString().toInt()
+
+
+
              // if name is  duplicated remove the existing activity and add its duration to the new activity
              if(isNameDuplicated){
                  var indexOfDuplicatedName = syncedActivityNames.indexOf(newActivityName.toString())
