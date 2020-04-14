@@ -29,8 +29,9 @@ class ViewActivityHistory : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_history)
-        drawChart()
+        createGoalList()
         compareToGoals()
+        drawChart()
     }
 
 
@@ -134,5 +135,34 @@ class ViewActivityHistory : AppCompatActivity() {
             }
         }
         goalStatus.setText(textToBeDisplayed)
+    }
+
+    fun createGoalList(){
+        var appFilePath = filesDir
+        val goalActivityListFileName = "$appFilePath/ActivityGoals"
+        val goalActivityListFile = File(goalActivityListFileName)
+        // if app root directory does not exist, make it
+        if (!appFilePath.isDirectory) {
+            appFilePath.mkdir()
+        }
+        // if there is not a directory for the current day, make one
+        if (!goalActivityListFile.isDirectory) {
+            goalActivityListFile.mkdir()
+        }
+        val gson = Gson()
+        val goalListFilePath = File("$goalActivityListFile/goals.json")
+        goalListFilePath.setWritable(true)
+        if (!goalListFilePath.exists()) {
+
+            // Gson needs the file to not be null so a default activity log needs to be created
+            var newGoalList = ArrayList<ActivityGoalDTO>()
+            var defaultActivityGoal = ActivityGoalDTO("DEFAULTACTIVITYGOALNAME", 0, 0)
+            newGoalList.add(defaultActivityGoal)
+            var activityGoalList = ActivityGoalList(newGoalList)
+
+            // converts the object to a JSON string
+            var jsonString = gson.toJson(activityGoalList)
+            File(goalListFilePath.toString()).writeText(jsonString)
+        }
     }
 }
