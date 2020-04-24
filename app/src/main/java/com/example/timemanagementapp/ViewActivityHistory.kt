@@ -40,7 +40,7 @@ class ViewActivityHistory : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun drawChart(){
+    private fun drawChart(){
         var appFilePath = filesDir
         val sdf = SimpleDateFormat("dd.M.yyyy")
         val currentDate = sdf.format(Date())
